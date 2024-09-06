@@ -1,0 +1,419 @@
+" vim: set fdm=marker:
+
+if &compatible
+  set nocompatible
+end
+
+" Functions {{{
+" Remove declared plugins
+function! s:UnPlug(plug_name)
+  if has_key(g:plugs, a:plug_name)
+    call remove(g:plugs, a:plug_name)
+  endif
+endfunction
+command!  -nargs=1 UnPlug call s:UnPlug(<args>)
+"}}}
+
+" PLUGINS {{{
+call plug#begin('~/.vim/plugged')
+
+if filereadable(expand("/usr/bin/fzf"))
+  Plug '/usr/bin/fzf'
+else
+  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+endif
+
+Plug 'tpope/vim-sensible'
+Plug 'junegunn/fzf.vim'
+" Plug 'raimondi/delimitmate'
+Plug 'janko-m/vim-test'
+Plug 'preservim/vimux'
+" Plug 'editorconfig/editorconfig-vim'
+Plug 'pbrisbin/vim-mkdir'
+Plug 'tpope/vim-bundler'
+Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-projectionist'
+Plug 'tpope/vim-rails'
+Plug 'tpope/vim-rake'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-rhubarb'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-sleuth'
+Plug 'sirver/ultisnips'
+Plug 'mattn/emmet-vim'
+Plug 'ludovicchabant/vim-gutentags'
+" Plug 'airblade/vim-gitgutter'
+Plug 'chrisbra/Colorizer'
+Plug 'itchyny/lightline.vim'
+" Plug 'dense-analysis/ale'
+" Plug 'tom-doerr/vim_codex'
+
+" Langs
+Plug 'sheerun/vim-polyglot'
+Plug 'prisma/vim-prisma'
+Plug 'preservim/vim-markdown'
+
+" LSP
+Plug 'dense-analysis/ale'
+Plug 'Exafunction/codeium.vim', { 'branch': 'main' }
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" Colors
+" Plug 'https://github.com/hiasinho/vim-colorme.git'
+" Plug 'cocopon/iceberg.vim'
+Plug 'owickstrom/vim-colors-paramount'
+" Plug 'arcticicestudio/nord-vim'
+Plug 'junegunn/seoul256.vim'
+Plug 'noahfrederick/vim-noctu'
+" Plug 'dracula/vim', { 'as': 'dracula' }
+" Plug 'doums/darcula'
+Plug 'w0ng/vim-hybrid'
+Plug 'tomasiser/vim-code-dark'
+Plug 'sonph/onehalf', { 'rtp': 'vim' }
+Plug 'lifepillar/vim-solarized8'
+Plug 'morhetz/gruvbox'
+Plug 'mhartington/oceanic-next'
+Plug 'endel/vim-github-colorscheme'
+Plug 'rakr/vim-one'
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'ghifarit53/tokyonight-vim'
+
+" Plug 'flazz/vim-colorschemes'
+
+call plug#end()
+"}}}
+
+" fzf {{{
+
+if executable('rg')
+  let g:fzf_files_options =
+        \ '--reverse ' .
+        \ '--preview "(coderay {} || cat {}) 2> /dev/null | head -'.&lines.'"'
+
+  set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
+
+  let $FZF_DEFAULT_COMMAND='rg --files -g "" --hidden --ignore-file=.gitignore'
+
+  if !exists(":Rg")
+    command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+    nnoremap \ :Rg<SPACE>
+  endif
+
+  command! -bang -nargs=* Rg
+        \ call fzf#vim#grep(
+        \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
+        \   fzf#vim#with_preview(), <bang>0)
+endif
+
+nnoremap <Leader>, :Buffers<CR>
+nnoremap <Leader>p :Files<cr>
+"}}}
+" vim-ruby {{{
+
+let g:ruby_indent_assignment_style = 'variable'
+let g:ruby_indent_hanging_elements = 0
+
+" }}}
+" vim-test {{{
+nnoremap <silent> <Leader>tn :TestNearest<CR>
+nnoremap <silent> <Leader>tf :TestFile<CR>
+nnoremap <silent> <Leader>tl :TestLast<CR>
+nnoremap <silent> <Leader>tv :TestVisit<CR>
+nnoremap <silent> <Leader>tc :VimuxCloseRunner<CR>
+
+let g:test#ruby#rspec#executable = 'bundle exec rspec'
+
+if has('nvim')
+  let test#strategy = {
+        \ 'nearest': 'neovim',
+        \ 'file':    'neovim',
+        \ 'suite':   'vimux',
+        \}
+else
+  let test#strategy = {
+        \ 'nearest': 'vimterminal',
+        \ 'file':    'vimterminal',
+        \ 'suite':   'vimterminal',
+        \}
+endif
+"}}}
+" Gutentags {{{
+let g:gutentags_ctags_executable = "ctags"
+let g:tagbar_ctags_bin = "ctags"
+"}}}
+" ale {{{
+
+" " Move between linting errors
+" nnoremap ]r :ALENextWrap<CR>
+" nnoremap [r :ALEPreviousWrap<CR>
+
+" let g:ale_linters = {
+"   \   'javascript': ['eslint', 'tsserver'],
+"   \   'javascript.jsx': ['eslint', 'tsserver'],
+"   \   'javascriptreact': ['eslint', 'tsserver'],
+"   \   'typescript': ['eslint', 'tsserver'],
+"   \   'typescriptreact': ['eslint', 'tsserver'],
+"   \   'ruby': ['rubocop', 'brakeman', 'rails_best_practices'],
+"   \   'elixir': ['credo'],
+"   \   'scss': ['stylelint'],
+"   \   'css': ['stylelint'],
+"   \   'sh': ['shfmt'],
+"   \   'text': ['chktex', 'lacheck'],
+"   \}
+
+
+" let g:ale_fixers = {
+"   \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+"   \   'html': ['prettier'],
+"   \   'ruby': ['prettier'],
+"   \   'eruby': ['rufo'],
+"   \   'javascript': ['eslint', 'prettier'],
+"   \   'javascript.jsx': ['eslint', 'prettier'],
+"   \   'javascriptreact': ['eslint', 'prettier'],
+"   \   'typescript': ['eslint', 'prettier'],
+"   \   'typescriptreact': ['eslint', 'prettier'],
+"   \   'elixir': ['mix_format'],
+"   \   'scss': ['stylelint'],
+"   \   'css': ['stylelint', 'prettier'],
+"   \   'sh': ['shfmt'],
+"   \   'json': ['fixjson'],
+"   \}
+
+" let g:ale_pattern_options = {
+"   \   'node_modules/.*': {'ale_enabled': 0},
+"   \}
+
+" let g:ale_javascript_eslint_executable = 'eslint_d'
+" let g:ale_javascript_eslint_options = '--cache'
+
+" let g:ale_linters_explicit = 1
+" let g:ale_fix_on_save = 0
+
+" let g:ale_lint_on_text_changed = 0
+" let g:ale_lint_on_insert_leave = 1
+
+" let g:ale_hover_cursor = 0
+" let g:ale_hover_to_preview = 0
+" let g:ale_set_balloons = 1
+" let g:ale_completion_enabled = 1
+" let g:ale_completion_autoimport = 1
+" let g:ale_close_preview_on_insert = 1
+" let g:ale_floating_preview = 1
+" let g:ale_floating_window_border = ['│', '─', '╭', '╮', '╯', '╰']
+
+" let g:ale_sign_error = ''
+" let g:ale_sign_warning = ''
+" highlight ALEErrorSign ctermbg=NONE ctermfg=red
+" highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
+
+" let g:ale_completion_symbols = {
+"   \ 'text': '',
+"   \ 'method': '',
+"   \ 'function': '',
+"   \ 'constructor': '',
+"   \ 'field': '',
+"   \ 'variable': '',
+"   \ 'class': '',
+"   \ 'interface': '',
+"   \ 'module': '',
+"   \ 'property': '',
+"   \ 'unit': 'unit',
+"   \ 'value': 'val',
+"   \ 'enum': '',
+"   \ 'keyword': 'keyword',
+"   \ 'snippet': '',
+"   \ 'color': 'color',
+"   \ 'file': '',
+"   \ 'reference': 'ref',
+"   \ 'folder': '',
+"   \ 'enum member': '',
+"   \ 'constant': '',
+"   \ 'struct': '',
+"   \ 'event': 'event',
+"   \ 'operator': '',
+"   \ 'type_parameter': 'type param',
+"   \ '<default>': 'v'
+"   \ }
+
+" " Use ALE's function for omnicompletion.
+" set omnifunc=ale#completion#OmniFunc
+
+" nmap gd :ALEGoToDefinition<CR>
+" nmap gy :ALEGoToTypeDefinition<CR>
+" nmap gr :ALERename<CR>
+" nmap K :ALEHover<CR>
+
+" nmap <Leader>f <Plug>(ale_fix)
+" autocmd FileType typescript,typescriptreact nmap <buffer> <Leader>t :ALEHover<CR>
+
+"}}}
+" UltiSnips {{{
+let g:UltiSnipsSnippetStorageDirectoryForUltiSnipsEdit="$HOME/.vim/UltiSnips"
+let g:UltiSnipsSnippetsDir="$HOME/.vim/UltiSnips"
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsListSnippets="<c-k>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsEditSplit="vertical"
+"}}}
+" vim-fugitive {{{
+nnoremap <leader>gs :Git<CR>
+nnoremap <leader>gw :Gwrite<CR>
+nnoremap <leader>gd :Gvdiff!<CR>
+nnoremap <leader>gh :diffget //2<CR>
+nnoremap <leader>gl :diffget //3<CR>
+"}}}
+" gitgutter {{{
+let g:gitgutter_enabled = 0
+let g:gitgutter_map_keys = 0
+"}}}
+" lightline {{{
+
+function! LinterStatus() abort
+    let l:counts = ale#statusline#Count(bufnr(''))
+
+    let l:all_errors = l:counts.error + l:counts.style_error
+    let l:all_non_errors = l:counts.total - l:all_errors
+
+    return l:counts.total == 0 ? 'OK' : printf(
+    \   '%dW %dE',
+    \   all_non_errors,
+    \   all_errors
+    \)
+endfunction
+
+let g:lightline = {
+      \ 'colorscheme': 'one',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'readonly', 'relativepath', 'modified' ] ],
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              [ 'codeium', 'linter', 'gitbranch', 'fileencoding', 'filetype' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveHead',
+      \   'linter': 'LinterStatus',
+      \   'codeium': 'codeium#GetStatusString'
+      \ },
+      \ }
+"}}}
+" markdown {{{
+
+let g:vim_markdown_follow_anchor = 1
+let g:vim_markdown_folding_disabled = 1
+" let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_autowrite = 1
+
+" }}}
+" LSP coc {{{
+
+let g:ale_linters = {
+  \   'javascript': ['eslint', 'tsserver'],
+  \   'javascript.jsx': ['eslint', 'tsserver'],
+  \   'javascriptreact': ['eslint', 'tsserver'],
+  \   'typescript': ['eslint', 'tsserver'],
+  \   'typescriptreact': ['eslint', 'tsserver'],
+  \   'ruby': ['brakeman', 'rubocop'],
+  \   'eruby': ['erblint'],
+  \   'css': ['stylelint'],
+  \   'python': ['pycodestyle'],
+\}
+
+let g:ale_fixers = {
+  \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+  \   'javascript': ['eslint', 'prettier'],
+  \   'javascript.jsx': ['eslint', 'prettier'],
+  \   'javascriptreact': ['eslint', 'prettier'],
+  \   'typescript': ['eslint', 'prettier'],
+  \   'typescriptreact': ['eslint', 'prettier'],
+  \   'ruby': ['rubocop'],
+  \   'eruby': ['erblint', 'erb-formatter'],
+  \   'css': ['stylelint'],
+  \   'python': ['autopep8'],
+\}
+
+let g:ale_ruby_rubocop_executable = 'bundle'
+
+let g:ale_linters_explicit = 1
+let g:ale_fix_on_save = 0
+let g:ale_virtualtext_cursor = 'current'
+
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+
+let g:ale_sign_column_always = 1
+let g:ale_hover_cursor = 0
+let g:ale_hover_to_preview = 0
+let g:ale_set_balloons = 1
+let g:ale_completion_enabled = 1
+let g:ale_completion_autoimport = 1
+let g:ale_close_preview_on_insert = 1
+let g:ale_floating_preview = 1
+let g:ale_floating_window_border = ['│', '─', '╭', '╮', '╯', '╰']
+
+let g:ale_sign_error = ''
+let g:ale_sign_warning = ''
+highlight ALEErrorSign ctermbg=NONE ctermfg=red
+highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
+
+let g:ale_completion_symbols = {
+  \ 'text': '',
+  \ 'method': '',
+  \ 'function': '',
+  \ 'constructor': '',
+  \ 'field': '',
+  \ 'variable': '',
+  \ 'class': '',
+  \ 'interface': '',
+  \ 'module': '',
+  \ 'property': '',
+  \ 'unit': 'unit',
+  \ 'value': 'val',
+  \ 'enum': '',
+  \ 'keyword': 'keyword',
+  \ 'snippet': '',
+  \ 'color': 'color',
+  \ 'file': '',
+  \ 'reference': 'ref',
+  \ 'folder': '',
+  \ 'enum member': '',
+  \ 'constant': '',
+  \ 'struct': '',
+  \ 'event': 'event',
+  \ 'operator': '',
+  \ 'type_parameter': 'type param',
+  \ '<default>': 'v'
+  \ }
+
+" Use ALE's function for omnicompletion.
+set omnifunc=ale#completion#OmniFunc
+
+nmap gd :ALEGoToDefinition<CR>
+nmap gy :ALEGoToTypeDefinition<CR>
+nmap gr :ALERename<CR>
+nmap K :ALEHover<CR>
+
+nnoremap <silent> K :ALEHover<CR>
+nmap <Leader>l <Plug>(ale_lint)
+nmap <Leader>f <Plug>(ale_fix)
+" }}}
+" codeium {{{
+
+" let g:codeium_enabled = v:false
+let g:codeium_manual = v:true
+" let g:codeium_disable_bindings = 1
+
+" imap <script><silent><nowait><expr> <C-g> codeium#Accept()
+imap <C-l> <Cmd>call codeium#CycleOrComplete()<CR>
+imap <C-h> <Cmd>call codeium#CycleCompletions(-1)<CR>
+imap <C-x> <Cmd>call codeium#Clear()<CR>
+" imap <C-\> <Cmd>call codeium#Complete()<CR>
+
+" }}}

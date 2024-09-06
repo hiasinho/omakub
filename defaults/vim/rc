@@ -1,0 +1,250 @@
+" vim: set fdm=marker:fdl=0
+
+" Leader
+let mapleader = " "
+
+let g:python3_host_prog=$HOME.'/.venv/bin/python3'
+
+if filereadable(expand("$OMAKUB_PATH/defaults/vim/plugins"))
+  source $OMAKUB_PATH/defaults/vim/plugins
+endif
+
+" source additional config files
+filetype plugin on
+
+" General Vim Settings {{{
+
+set nocompatible
+set showcmd
+set hidden
+set updatetime=100
+set nobackup
+set nowritebackup
+set noswapfile
+set hlsearch
+set autowrite
+
+" whitespace -> Softtabs, 2 spaces
+set tabstop=2
+set shiftwidth=2
+set shiftround
+set expandtab
+set nojoinspaces
+
+" line length
+" autocmd VimResized * | set columns=80
+set textwidth=120
+set colorcolumn=+1
+
+" gutters
+set number
+set numberwidth=5
+set number norelativenumber
+set signcolumn=yes
+
+" Open new split panes to right and bottom, which feels more natural
+set splitbelow
+set splitright
+
+" scrolloff
+set scrolloff=1
+set sidescrolloff=5
+
+" completion
+set path+=**
+set wildmenu
+set wildmode=list:longest,list:full
+set completeopt-=preview
+
+" undo
+set undofile
+set undodir=$HOME/.vim/undo
+set undolevels=10000
+set undoreload=20000
+
+" load local vimrc
+set exrc
+set secure
+
+" Always use vertical diffs
+if &diff
+  set diffopt+=vertical
+  set diffopt+=algorithm:patience
+endif
+
+augroup vimrcEx
+  autocmd!
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it for commit messages, when the position is invalid, or when
+  " inside an event handler (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+
+  " Set syntax highlighting for specific file types
+  autocmd BufRead,BufNewFile *.md set filetype=markdown
+  autocmd BufRead,BufNewFile .{jscs,jshint,eslint}rc set filetype=json
+  autocmd BufRead,BufNewFile vimrc.plugged set filetype=vim
+  autocmd BufRead,BufNewFile .{aliases,aliasrc} set filetype=zsh
+  autocmd BufRead,BufNewFile {aliasrc} set filetype=zsh
+
+  autocmd filetype markdown setlocal nonumber
+augroup END
+
+"}}}
+" Visual Settings {{{
+
+if (has("termguicolors"))
+  set termguicolors
+endif
+
+" color scheme
+" colorscheme hybrid
+" colorscheme OceanicNext
+
+" set background=dark
+
+function! BackgroundDark()
+  set background=dark 
+  colorscheme one
+endfunction
+
+function! BackgroundLight()
+  colorscheme github
+  set background=light 
+endfunction
+
+function! BackgroundToggle()
+  if (&background == "light")
+    call BackgroundDark()
+  else
+    call BackgroundLight()
+  endif
+endfunction
+
+nnoremap <silent> <Leader>bg :call BackgroundToggle()<CR>
+
+call BackgroundDark()
+
+" call BackgroundLight()
+" if getenv("VIM_THEME") == "light"
+"   call BackgroundLight()
+" else
+"   call BackgroundDark()
+" endif
+
+" automatically rebalance windows on vim resize
+autocmd VimResized * :wincmd =
+
+" show cursorline in insert mode
+autocmd InsertEnter,InsertLeave * set cursorline!
+
+" " Folds
+hi Folded ctermfg=DarkGrey guifg=#6a6a69
+
+" " Highlights
+" hi CocHoverRange term=bold ctermbg=0 guibg=#474e5d
+" hi HighlightedyankRegion term=bold ctermbg=0 guibg=#474e5d
+
+" Allow for terminal background transparency
+hi Normal guibg=NONE ctermbg=NONE
+hi LineNr guibg=NONE ctermbg=NONE
+hi SignColumn guibg=NONE ctermbg=NONE
+hi ColorColumn guibg=DarkGray ctermbg=DarkGray
+hi CursorLine guibg=NONE ctermbg=NONE
+hi GitGutterAdd guibg=NONE
+hi GitGutterChange guibg=NONE
+hi GitGutterDelete guibg=NONE
+hi GitGutterChangeDelete guibg=NONE
+
+" spell check
+hi SpellBad cterm=undercurl gui=undercurl
+
+" easy motion targets
+hi EasyMotionTarget guifg=#f4b80f guibg=black
+
+"}}}
+" Terminal Settings {{{
+
+" if has("nvim")
+"   " Make escape work in the Neovim terminal.
+"   tnoremap <Esc> <C-\><C-n>
+
+"   " Make navigation into and out of Neovim terminal splits nicer.
+"   tnoremap <C-h> <C-\><C-N><C-w>h
+"   tnoremap <C-j> <C-\><C-N><C-w>j
+"   tnoremap <C-k> <C-\><C-N><C-w>k
+"   tnoremap <C-l> <C-\><C-N><C-w>l
+
+"   " I like relative numbering when in normal mode.
+"   " autocmd TermOpen * setlocal conceallevel=0 colorcolumn=0 relativenumber
+
+"   " Prefer Neovim terminal insert mode to normal mode.
+"   " autocmd BufEnter term://* startinsert
+" endif
+
+" }}}
+" vim-brain {{{
+
+autocmd BufRead,BufNewFile .notes set filetype=markdown
+
+let g:brain_path = '~/Documents/me'
+let g:brain_repo = 'https://github.com/hiasinho/me'
+
+nnoremap <silent> <Plug>BrainTodo :BrainEdit links.md<CR>
+
+" }}}
+" Folding {{{
+
+augroup rubyFolds
+  autocmd!
+  autocmd FileType ruby setlocal fdm=syntax
+  autocmd FileType ruby setlocal fdl=99
+augroup END
+
+augroup jsFolds
+  autocmd!
+  autocmd FileType javascript,typescript,javascriptreact,typescriptreact setlocal fdm=syntax
+  autocmd FileType javascript,typescript,javascriptreact,typescriptreact setlocal fdl=99
+augroup END
+
+"}}}
+" Mappings {{{
+
+" Switch between the last two files
+nnoremap <Leader><Leader> <C-^>
+
+" no arrows
+map <up> <nop>
+map <down> <nop>
+map <left> <nop>
+map <right> <nop>
+
+" Quicker window movement
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+" buffer navigation
+" nnoremap <leader>, :silent! bp<cr>
+" nnoremap <leader>. :silent! bn<cr>
+" nnoremap <leader>; :silent! bd<cr>
+" nnoremap <Leader>; :silent! bp\|bd #<CR>
+
+" Make double-<Esc> clear search highlights
+nnoremap <silent> <esc><esc> <esc>:nohlsearch<cr><esc>
+
+" Edit rc-files
+nnoremap <Leader>ve :edit $OMAKUB_PATH/defaults/vim/rc<CR>
+nnoremap <Leader>vp :edit $OMAKUB_PATH/defaults/vim/plugins<CR>
+nnoremap <Leader>vv :vsplit $ZDOTDIR/.vimrc<CR>
+nnoremap <Leader>vs :source $OMAKUB_PATH/defaults/vim/rc<CR>
+nnoremap <Leader>ze :edit $ZDOTDIR/.vimrc<CR>
+nnoremap <Leader>zs :!source $ZDOTDIR/.vimrc<CR>
+
+" shortcut to edit file in the same directory as the current file
+nnoremap <leader>e :e <c-r>=expand('%:p:h') . '/'<cr>
+"}}}
