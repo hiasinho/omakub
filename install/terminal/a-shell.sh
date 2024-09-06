@@ -3,10 +3,10 @@ chsh -s $(which zsh)
 
 # Configure the zsh shell using Omakub defaults
 [ -f "~/.zshenv" ] && mv ~/.zshenv ~/.zshenv.bak
-cp ~/.local/share/omakub/configs/zshenv ~/.zshenv
+ln -sf ~/.local/share/omakub/configs/zshenv ~/.zshenv
 
 [ -f "~/.zshrc" ] && mv ~/.zshrc ~/.config/zsh/zshrc.bak
-cp ~/.local/share/omakub/configs/zshrc ~/.config/zsh/.zshrc
+ln -sf ~/.local/share/omakub/configs/zshrc ~/.config/zsh/.zshrc
 
 exec zsh
 
