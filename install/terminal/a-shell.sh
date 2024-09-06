@@ -1,10 +1,15 @@
-# Configure the bash shell using Omakub defaults
-[ -f "~/.bashrc" ] && mv ~/.bashrc ~/.bashrc.bak
-cp ~/.local/share/omakub/configs/bashrc ~/.bashrc
+sudo apt install -y zsh
+chsh -s $(which zsh)
+
+# Configure the zsh shell using Omakub defaults
+[ -f "~/.zshenv" ] && mv ~/.zshenv ~/.zshenv.bak
+cp ~/.local/share/omakub/configs/zshenv ~/.zshenv
+
+[ -f "~/.zshrc" ] && mv ~/.zshrc ~/.config/zsh/zshrc.bak
+cp ~/.local/share/omakub/configs/zshrc ~/.config/zsh/.zshrc
+
+exec zsh
 
 # Load the PATH for use later in the installers
-source ~/.local/share/omakub/defaults/bash/shell
-
-[ -f "~/.inputrc" ] && mv ~/.inputrc ~/.inputrc.bak
-# Configure the inputrc using Omakub defaults
-cp ~/.local/share/omakub/configs/inputrc ~/.inputrc
+# source ~/.local/share/omakub/defaults/zsh/shell
+# source ~/.local/share/omakub/defaults/zsh/exports

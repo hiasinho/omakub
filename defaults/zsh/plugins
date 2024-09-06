@@ -1,0 +1,58 @@
+# check if ~/.zsh exists
+if [ ! -d "$ZDOTDIR/plugins" ]; then
+    echo "Creating a plugins folder in $ZDOTDIR"
+    echo "This can be copied elsewhere and then linked, preferrably using GNU stow"
+    mkdir $ZDOTDIR/plugins
+fi
+
+# # check if p10k exists
+# if [ ! -d "$ZDOTDIR/plugins/powerlevel10k" ]; then
+#     echo "Installing powerelevel10k theme."
+#     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZDOTDIR/plugins/powerlevel10k
+# fi
+#
+# source $ZDOTDIR/plugins/powerlevel10k/powerlevel10k.zsh-theme
+
+# check if zsh autosuggest exists
+if [ ! -d "$ZDOTDIR/plugins/zsh-autosuggestions" ]; then
+    echo "Installing zsh autosuggestions."
+    git clone https://github.com/zsh-users/zsh-autosuggestions $ZDOTDIR/plugins/zsh-autosuggestions
+fi
+
+source $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# check if zsh syntax highlighting exists
+if [ ! -d "$ZDOTDIR/plugins/zsh-syntax-highlighting" ]; then
+    echo "Installing zsh syntax highlighting."
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZDOTDIR/plugins/zsh-syntax-highlighting
+fi
+
+source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# check if zsh history substring search
+if [ ! -d "$ZDOTDIR/plugins/zsh-history-substring-search" ]; then
+    echo "Installing zsh history substring search."
+    git clone https://github.com/zsh-users/zsh-history-substring-search.git $ZDOTDIR/plugins/zsh-history-substring-search
+fi
+
+source $ZDOTDIR/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+# enabling up and down arrow keys to use the plugin
+bindkey "^[[A" history-substring-search-up
+bindkey "^[[B" history-substring-search-down
+
+# check if fzf dir navigator exists exists
+if [ ! -d "$ZDOTDIR/plugins/fzf-dir-navigator" ]; then
+    echo "Installing fzf dir navigator."
+    git clone https://github.com/KulkarniKaustubh/fzf-dir-navigator.git $ZDOTDIR/plugins/fzf-dir-navigator
+fi
+
+source $ZDOTDIR/plugins/fzf-dir-navigator/fzf-dir-navigator.zsh
+
+# check if zjump exists exists
+if [ ! -d "$ZDOTDIR/plugins/zjump" ]; then
+    echo "Installing zjump."
+    git clone https://github.com/qoomon/zjump.git $ZDOTDIR/plugins/zjump
+fi
+
+source $ZDOTDIR/plugins/zjump/zjump.zsh

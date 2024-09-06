@@ -1,0 +1,27 @@
+# Enable colors and change prompt:
+autoload -U colors && colors  # Load colors
+autoload -Uz vcs_info
+precmd_vcs_info() { vcs_info }
+precmd_functions+=( precmd_vcs_info )
+setopt prompt_subst
+
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' unstagedstr '!'
+zstyle ':vcs_info:*' stagedstr '±'
+zstyle ':vcs_info:git*' formats " %F{red}%u%f%F{yellow}%c%f%F{cyan} %b%f"
+
+local prompt_user=""
+if [[ $(whoami) != "hiasinho" ]]; then
+  prompt_user="%{$fg[yellow]%}%n"
+fi
+if [[ -n "$SSH_CONNECTION" ]]; then
+  prompt_user+="%{$fg[green]%}@%{$fg[blue]%}%M"
+fi
+if [[ -n "$prompt_user" ]]; then
+  prompt_user+=" "
+fi
+
+local ret_status="%(?:%F{green}»%f :%B%F{red}»%f%b )"
+PROMPT='$prompt_user%F{magenta}%2~%f ${ret_status}'
+RPROMPT='${vcs_info_msg_0_}'

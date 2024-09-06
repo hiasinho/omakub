@@ -1,0 +1,70 @@
+alias ls='ls -G'
+alias l='ls -lFh'     #size,show type,human readable
+alias la='ls -lAFh'   #long list,show almost all,show type,human readable
+# alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
+alias ll='ls -l'      #long list
+alias ldot='ls -ld .*'
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+alias zshrc='${=EDITOR} ${ZDOTDIR:-$HOME}/.zshrc'
+alias aliasrc='${=EDITOR} ${ZDOTDIR:-$HOME}/aliases.local'
+alias exportsrc='${=EDITOR} ${ZDOTDIR:-$HOME}/exports.local'
+
+alias grep='grep --color'
+
+alias tf='tail -f'
+alias p='ps -f'
+alias z='j'
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# MacOS
+alias arm='arch -arm64'
+alias x86='arch -x86_64'
+
+# Homebrew
+alias abrew='arch -arm64 brew'
+alias xbrew='arch -x86_64 brew'
+alias brs='brew search'
+alias bri='brew install'
+
+# tmux
+
+# git
+alias g='git'
+alias gst='git status'
+alias gs='git status'
+alias ga='git add'
+alias gp='git push'
+alias gb='git branch '
+alias gc='git commit'
+alias gd='git diff'
+alias gco='git checkout '
+alias gl='git log'
+alias gr='git remote'
+alias grs='git remote show'
+alias glo='git log --pretty="oneline"'
+alias glol='git log --graph --oneline --decorate'
+
+alias b='bundle install'
+alias be='bundle exec'
+alias fman='foreman start -f Procfile.development'
+alias rcup='rcup -v'
+alias e='eval "$EDITOR"'
+alias v='vim'
+alias n='nvim'
+
+# npm
+alias ni='npm install --save'
+alias nid='npm install --save-dev'
+alias nip='npm install -g'
+alias nu='npm uninstall --save'
+
+if [[ -f "${ZDOTDIR:-$HOME}/aliases.local" ]]; then
+  source "${ZDOTDIR:-$HOME}/aliases.local"
+fi

@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+source ~/.local/share/omakub/defaults/zsh/rc
+
+# Editor used by CLI
+export EDITOR="vim"
+export SUDO_EDITOR="$EDITOR"

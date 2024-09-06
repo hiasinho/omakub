@@ -1,0 +1,6 @@
+source ~/.local/share/omakub/defaults/zsh/shell
+source ~/.local/share/omakub/defaults/zsh/exports
+source ~/.local/share/omakub/defaults/zsh/aliases
+source ~/.local/share/omakub/defaults/zsh/prompt
+source ~/.local/share/omakub/defaults/zsh/plugins
+source ~/.local/share/omakub/defaults/zsh/init

@@ -1,0 +1,44 @@
+HISTFILE="$HISTFILE"
+HISTSIZE=10000000
+SAVEHIST=10000000
+bindkey -v # activate vim mode
+
+setopt EXTENDED_HISTORY          # Write the history file in the ':start:elapsed;command' format.
+setopt SHARE_HISTORY             # Share history between all sessions.
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire a duplicate event first when trimming history.
+setopt HIST_IGNORE_DUPS          # Do not record an event that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS      # Delete an old recorded event if a new event is a duplicate.
+setopt HIST_FIND_NO_DUPS         # Do not display a previously found event.
+setopt HIST_IGNORE_SPACE         # Do not record an event starting with a space.
+setopt HIST_SAVE_NO_DUPS         # Do not write a duplicate event to the history file.
+setopt HIST_VERIFY               # Do not execute immediately upon history expansion.
+
+# Fixing zsh history problems on multiple terminals
+setopt inc_append_history
+setopt share_history
+
+# Ignore duplicate commands in history file
+setopt histignorealldups
+
+# Fixing some keys inside zsh
+autoload -Uz select-word-style
+select-word-style bash
+
+# Add highlight enabled tab completion with colors
+zstyle ':completion:*' menu select
+eval "$(gdircolors)"
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+# Get bash's compgen
+autoload -Uz compinit
+compinit
+autoload -Uz bashcompinit
+bashcompinit
+
+# custom ZSH keybinds
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+bindkey "^[[H" beginning-of-line
+bindkey "^[[F" end-of-line
+bindkey "^[[3~" delete-char
+bindkey -s "^[e" "nvim"
