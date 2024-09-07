@@ -5,6 +5,11 @@ alias la='ls -lAFh'   #long list,show almost all,show type,human readable
 alias ll='ls -l'      #long list
 alias ldot='ls -ld .*'
 
+alias fd='fdfind'
+
+alias lzg='lazygit'
+alias lzd='lazydocker'
+
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
