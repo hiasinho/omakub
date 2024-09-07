@@ -5,6 +5,7 @@ chsh -s $(which zsh)
 [ -f "~/.zshenv" ] && mv ~/.zshenv ~/.zshenv.bak
 ln -sf ~/.local/share/omakub/configs/zshenv ~/.zshenv
 
+mkdir -p ~/.config/zsh
 [ -f "~/.zshrc" ] && mv ~/.zshrc ~/.config/zsh/zshrc.bak
 ln -sf ~/.local/share/omakub/configs/zshrc ~/.config/zsh/.zshrc
 

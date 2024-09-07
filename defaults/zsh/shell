@@ -26,7 +26,7 @@ select-word-style bash
 
 # Add highlight enabled tab completion with colors
 zstyle ':completion:*' menu select
-eval "$(gdircolors)"
+eval "$(dircolors)"
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # Get bash's compgen
@@ -41,4 +41,6 @@ bindkey "^[[1;5D" backward-word
 bindkey "^[[H" beginning-of-line
 bindkey "^[[F" end-of-line
 bindkey "^[[3~" delete-char
-bindkey -s "^[e" "nvim"
+bindkey -s "^[e" "vim"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
